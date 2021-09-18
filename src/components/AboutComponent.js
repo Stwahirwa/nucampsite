@@ -1,17 +1,12 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
+import { baseUrl } from '../shared/baseUrl';
+import { Loading } from "./LoadingComponent";
 
 function About(props) {
 
-    const partners = props.partners.map(partner => {
-        return (
-          <Media tag = "li" key = {partner.id}>
-             <RenderPartner partnerItem = {partner}/>
-          </Media>
-        );
-    });
+ 
 
     return (
         <div className="container">
@@ -65,30 +60,54 @@ function About(props) {
                 <div className="col-12">
                     <h3>Community Partners</h3>
                 </div>
+
                 <div className="col mt-4">
-                    <Media list>
-                        {partners}
-                    </Media>
+                <PartnerList partners={props.partners}/>
                 </div>
             </div>
         </div>
     );
 }
 
-function RenderPartner ({partnerItem}){
-        if(partnerItem){
+function RenderPartner ({partner}){
+        if(partner){
             return(
                 <React.Fragment>
-                    <Media object src={partnerItem.image} alt={partnerItem.name} width = "150"/>
-                    <Media body className = "ml-5 mb -4">
-                        <Media>{partnerItem.name}</Media>
-                        {partnerItem.description}
-                    </Media>
-                </React.Fragment>
+                <Media object={true} src={baseUrl + partner.image} alt={partner.name} width="150"/>
+                <Media body={true} className="ml-5 mb-4">
+                    <Media heading={true}>{partner.name}</Media>
+                    {partner.description}
+                </Media>
+            </React.Fragment>
             );
-
-            <div/>
         }
+}
+
+function PartnerList (props) {
+console.log('Partner list', props)
+
+    const partners = props.partners.partners.map(partner => <RenderPartner partner={partner}/>)
+
+    if (props.partners.isLoading) {
+        return (
+            <Loading/>
+        )
+    }
+    if (props.partners.errMess) {
+        return(
+            <div className="col">
+               <h4>{props.partners.errMess}</h4>
+            </div>
+        )
+    }
+    return(
+        <div>
+            <Media list>
+               {partners}
+            </Media>
+        </div>
+    )
+
 }
 
 export default About;
